@@ -17,6 +17,7 @@ const galleryElement = document.querySelector('.gallery');
 const loaderElement = document.querySelector('.loader');
 const loadMoreBtn = document.querySelector('.load-more');
 
+let lightBox = new SimpleLightbox('.gallery-item-image a');
 let savedSearchQuery = '';
 export let galleryCurrentPage = 1;
 let totalPages = 0;
@@ -25,7 +26,7 @@ async function onSearchFormSubmit(event) {
   event.preventDefault();
   const searchQuery = event.target.elements.searchinput.value.trim();
   savedSearchQuery = searchQuery;
-
+  galleryCurrentPage = 1;
   galleryElement.innerHTML = '';
   loaderElement.classList.remove('is-hidden');
 
@@ -54,16 +55,24 @@ async function onSearchFormSubmit(event) {
     });
   }
   galleryElement.innerHTML = galleryItemsMarkUp(fetchImagesData.data.hits);
+
+  const lastLiItem = document.querySelector('.gallery-item:last-child');
+  console.log(lastLiItem);
+  let rect = lastLiItem.getBoundingClientRect();
+  console.log(rect);
+
   event.target.reset();
   loaderElement.classList.add('is-hidden');
-  loadMoreBtn.classList.remove('is-hidden');
-  const lightBox = new SimpleLightbox('.gallery-item-image a');
+  if (totalPages > 1) {
+    loadMoreBtn.classList.remove('is-hidden');
+  }
+  lightBox.refresh();
   galleryCurrentPage += 1;
 }
 
 formElement.addEventListener('submit', onSearchFormSubmit);
 
-loadMoreBtn.addEventListener('click', async event => {
+async function onLoadMorePressed(event) {
   const fetchImagesData = await fetchPhotoByQuery(savedSearchQuery);
   console.log(fetchImagesData.data);
 
@@ -84,9 +93,19 @@ loadMoreBtn.addEventListener('click', async event => {
     galleryItemsMarkUp(fetchImagesData.data.hits)
   );
 
-  galleryCurrentPage += 1;
+  lightBox.refresh();
 
-  if ((galleryCurrentPage = totalPages)) {
+  if (galleryCurrentPage === totalPages) {
     loadMoreBtn.classList.add('is-hidden');
+    loadMoreBtn.removeEventListener('click', onLoadMorePressed);
+    iziToast.error({
+      title: 'Error',
+      message: "We're sorry, but you've reached the end of search results.",
+      position: 'topRight',
+    });
   }
-});
+
+  galleryCurrentPage += 1;
+}
+
+loadMoreBtn.addEventListener('click', onLoadMorePressed);

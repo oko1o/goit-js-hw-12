@@ -5,7 +5,7 @@ import { galleryCurrentPage } from '../main.js';
 
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 const API_KEY = '43833375-8d3f0c892462ae71a1cd36e3a';
-export const PER_PAGE = 18;
+export const PER_PAGE = 15;
 
 export const fetchPhotoByQuery = q => {
   const params = {
@@ -17,17 +17,4 @@ export const fetchPhotoByQuery = q => {
     page: galleryCurrentPage,
   };
   return axios.get(`?key=${API_KEY}&`, { params });
-  // .then(response => response.json())
-  // .then(data => {
-  //   console.log(data);
-  //   if (data.hits.length === 0) {
-  //     iziToast.error({
-  //       title: 'Error',
-  //       message:
-  //         'Sorry, there are no images matching your search query. Please try again!',
-  //       position: 'topRight',
-  //     });
-  //   }
-  //   return data.hits;
-  // })
 };
