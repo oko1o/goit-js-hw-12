@@ -42,9 +42,8 @@ async function onSearchFormSubmit(event) {
   }
 
   const fetchImagesData = await fetchPhotoByQuery(searchQuery);
-  console.log(fetchImagesData.data);
   totalPages = Math.ceil(fetchImagesData.data.totalHits / PER_PAGE);
-  console.log(totalPages);
+
   if (fetchImagesData.data.hits.length === 0) {
     loadMoreBtn.classList.add('is-hidden');
     iziToast.error({
@@ -54,13 +53,16 @@ async function onSearchFormSubmit(event) {
       position: 'topRight',
     });
   }
+
   galleryElement.innerHTML = galleryItemsMarkUp(fetchImagesData.data.hits);
 
   event.target.reset();
   loaderElement.classList.add('is-hidden');
+
   if (totalPages > 1) {
     loadMoreBtn.classList.remove('is-hidden');
   }
+
   lightBox.refresh();
   galleryCurrentPage += 1;
 }
@@ -69,9 +71,7 @@ formElement.addEventListener('submit', onSearchFormSubmit);
 
 const smoothScrollOnLoadMore = () => {
   const lastLiItem = document.querySelector('.gallery-item:last-child');
-  console.log(lastLiItem);
   const itemHeight = lastLiItem.getBoundingClientRect().height;
-  console.log(itemHeight);
   const scrollHeight = itemHeight * 2;
   window.scrollBy({
     top: scrollHeight,
@@ -81,9 +81,6 @@ const smoothScrollOnLoadMore = () => {
 
 async function onLoadMorePressed(event) {
   const fetchImagesData = await fetchPhotoByQuery(savedSearchQuery);
-  console.log(fetchImagesData.data);
-
-  console.log(galleryCurrentPage);
 
   if (fetchImagesData.data.hits.length === 0) {
     loadMoreBtn.classList.add('is-hidden');
