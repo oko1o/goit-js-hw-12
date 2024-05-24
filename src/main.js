@@ -56,11 +56,6 @@ async function onSearchFormSubmit(event) {
   }
   galleryElement.innerHTML = galleryItemsMarkUp(fetchImagesData.data.hits);
 
-  const lastLiItem = document.querySelector('.gallery-item:last-child');
-  console.log(lastLiItem);
-  let rect = lastLiItem.getBoundingClientRect();
-  console.log(rect);
-
   event.target.reset();
   loaderElement.classList.add('is-hidden');
   if (totalPages > 1) {
@@ -71,6 +66,18 @@ async function onSearchFormSubmit(event) {
 }
 
 formElement.addEventListener('submit', onSearchFormSubmit);
+
+const smoothScrollOnLoadMore = () => {
+  const lastLiItem = document.querySelector('.gallery-item:last-child');
+  console.log(lastLiItem);
+  const itemHeight = lastLiItem.getBoundingClientRect().height;
+  console.log(itemHeight);
+  const scrollHeight = itemHeight * 2;
+  window.scrollBy({
+    top: scrollHeight,
+    behavior: 'smooth',
+  });
+};
 
 async function onLoadMorePressed(event) {
   const fetchImagesData = await fetchPhotoByQuery(savedSearchQuery);
@@ -106,6 +113,7 @@ async function onLoadMorePressed(event) {
   }
 
   galleryCurrentPage += 1;
+  smoothScrollOnLoadMore();
 }
 
 loadMoreBtn.addEventListener('click', onLoadMorePressed);
