@@ -38,6 +38,7 @@ async function onSearchFormSubmit(event) {
       message: "Sorry, input field can't be empty",
       position: 'topRight',
     });
+    loaderElement.classList.add('is-hidden');
     return;
   }
 
@@ -101,7 +102,6 @@ async function onLoadMorePressed(event) {
 
   if (galleryCurrentPage === totalPages) {
     loadMoreBtn.classList.add('is-hidden');
-    loadMoreBtn.removeEventListener('click', onLoadMorePressed);
     iziToast.error({
       title: 'Error',
       message: "We're sorry, but you've reached the end of search results.",
